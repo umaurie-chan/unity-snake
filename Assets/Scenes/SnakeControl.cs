@@ -11,6 +11,7 @@ public class SnakeControl : MonoBehaviour
 {
     private SnakeModel m_Model;
     public SnakeBlock BlockReference;
+    private SnakeBlock fruit;
 
     private SnakeDirection m_Direction = SnakeDirection.Right;
     
@@ -30,6 +31,14 @@ public class SnakeControl : MonoBehaviour
         obj = Instantiate(BlockReference, 
             new Vector3(-2,0,0), Quaternion.identity);
         m_Model.SnakeBlocks.Add(obj);
+        
+        // fruit
+        fruit = Instantiate(
+            BlockReference,
+            new Vector3(
+                UnityEngine.Random.Range(-10,10), 
+                UnityEngine.Random.Range(-10,10),
+                0), Quaternion.identity);
 
         StartCoroutine(move());
     }
@@ -75,10 +84,25 @@ public class SnakeControl : MonoBehaviour
                 m_Model.SnakeBlocks[i].transform.position = 
                     m_Model.SnakeBlocks[i - 1].transform.position;
             // move head
-            m_Model.SnakeBlocks[0].transform.position = 
+            var newpos =
                 SnakeTranslate(
                 m_Model.SnakeBlocks[0].transform.position,
                 m_Direction);
+            
+            // if distance between fruit and head <1
+            if (Vector3.Distance(newpos,
+                    fruit.transform.position) < 1)
+            { // eat it!
+                m_Model.SnakeBlocks.Insert(0, fruit);
+                fruit = Instantiate(
+                    BlockReference,
+                    new Vector3(
+                        UnityEngine.Random.Range(-10,10), 
+                        UnityEngine.Random.Range(-10,10),
+                        0), Quaternion.identity);
+            }
+            else // move
+                m_Model.SnakeBlocks[0].transform.position = newpos;
         }
     }
 }
