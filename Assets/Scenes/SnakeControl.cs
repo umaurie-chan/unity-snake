@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ public class SnakeControl : MonoBehaviour
     private SnakeModel m_Model;
     public SnakeBlock BlockReference;
 
-    private SnakeDirection m_Direction = SnakeDirection.Left;
+    private SnakeDirection m_Direction = SnakeDirection.Right;
     
     public void Start()
     {
@@ -48,12 +49,26 @@ public class SnakeControl : MonoBehaviour
         }
     }
 
+    public void Update()
+    {
+        // deal with input
+        if (Input.GetKey(KeyCode.UpArrow))
+            m_Direction = SnakeDirection.Up;
+        if (Input.GetKey(KeyCode.DownArrow))
+            m_Direction = SnakeDirection.Down;
+        if (Input.GetKey(KeyCode.LeftArrow))
+            m_Direction = SnakeDirection.Left;
+        if (Input.GetKey(KeyCode.RightArrow))
+            m_Direction = SnakeDirection.Right;
+    }
+
     IEnumerator move()
     {
         while (true)
         {
             // wait for tick
             yield return new WaitForSeconds(1);
+
             // move body
             for (int i = m_Model.SnakeBlocks.Count - 1;
                 i >= 1; i--)
@@ -63,7 +78,7 @@ public class SnakeControl : MonoBehaviour
             m_Model.SnakeBlocks[0].transform.position = 
                 SnakeTranslate(
                 m_Model.SnakeBlocks[0].transform.position,
-                SnakeDirection.Left);
+                m_Direction);
         }
     }
 }
