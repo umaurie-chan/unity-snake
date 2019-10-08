@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public enum SnakeDirection {
     Up, Down, Left, Right
@@ -10,8 +11,9 @@ public enum SnakeDirection {
 public class SnakeControl : MonoBehaviour
 {
     private SnakeModel m_Model;
-    public SnakeBlock BlockReference;
-    private SnakeBlock fruit;
+    public SnakeBlock blockReference;
+    private SnakeBlock m_Fruit;
+    private float m_TickTime = 1;
 
     private SnakeDirection m_Direction = SnakeDirection.Right;
     
@@ -21,26 +23,26 @@ public class SnakeControl : MonoBehaviour
         m_Model = FindObjectOfType<SnakeModel>();
         
         // create the 3 initial blocks
-        SnakeBlock obj = Instantiate(BlockReference, Vector3.zero, Quaternion.identity);
+        var obj = Instantiate(blockReference, Vector3.zero, Quaternion.identity);
         m_Model.SnakeBlocks.Add(obj);
         
-        obj = Instantiate(BlockReference, 
+        obj = Instantiate(blockReference, 
             new Vector3(-1,0,0), Quaternion.identity);
         m_Model.SnakeBlocks.Add(obj);
         
-        obj = Instantiate(BlockReference, 
+        obj = Instantiate(blockReference, 
             new Vector3(-2,0,0), Quaternion.identity);
         m_Model.SnakeBlocks.Add(obj);
         
         // fruit
-        fruit = Instantiate(
-            BlockReference,
+        m_Fruit = Instantiate(
+            blockReference,
             new Vector3(
                 UnityEngine.Random.Range(-10,10), 
                 UnityEngine.Random.Range(-10,10),
                 0), Quaternion.identity);
 
-        StartCoroutine(move());
+        StartCoroutine(Move());
     }
 
     Vector3 SnakeTranslate(Vector3 elem, SnakeDirection direction)
@@ -71,12 +73,12 @@ public class SnakeControl : MonoBehaviour
             m_Direction = SnakeDirection.Right;
     }
 
-    IEnumerator move()
+    IEnumerator Move()
     {
         while (true)
         {
             // wait for tick
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(m_TickTime);
 
             // move body
             for (int i = m_Model.SnakeBlocks.Count - 1;
@@ -88,14 +90,14 @@ public class SnakeControl : MonoBehaviour
                 SnakeTranslate(
                 m_Model.SnakeBlocks[0].transform.position,
                 m_Direction);
-            
+            // todo: improve collision check
             // if distance between fruit and head <1
             if (Vector3.Distance(newpos,
-                    fruit.transform.position) < 1)
+                    m_Fruit.transform.position) < 1)
             { // eat it!
-                m_Model.SnakeBlocks.Insert(0, fruit);
-                fruit = Instantiate(
-                    BlockReference,
+                m_Model.SnakeBlocks.Insert(0, m_Fruit);
+                m_Fruit = Instantiate(
+                    blockReference,
                     new Vector3(
                         UnityEngine.Random.Range(-10,10), 
                         UnityEngine.Random.Range(-10,10),
@@ -104,5 +106,9 @@ public class SnakeControl : MonoBehaviour
             else // move
                 m_Model.SnakeBlocks[0].transform.position = newpos;
         }
+    }
+    private void UpdateTickTime()
+    {
+        m_TickTime = (m_TickTime -0.1f)*0.9f + 0.1f;
     }
 }

@@ -224,7 +224,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d38a3ab45cb7ae0b383ea3ce0144093a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BlockReference: {fileID: 1338125864760752331, guid: 6e564ce1e6280e85aa932ba62b9c8272,
+  blockReference: {fileID: 1338125864760752331, guid: 6e564ce1e6280e85aa932ba62b9c8272,
     type: 3}
 --- !u!4 &250874101
 Transform:
