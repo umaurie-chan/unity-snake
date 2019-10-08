@@ -2,11 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum SnakeDirection {
+    Up, Down, Left, Right
+}
+
 public class SnakeControl : MonoBehaviour
 {
     private SnakeModel m_Model;
     public SnakeBlock BlockReference;
 
+    private SnakeDirection m_Direction = SnakeDirection.Left;
+    
     public void Start()
     {
         // find the model
@@ -23,5 +29,41 @@ public class SnakeControl : MonoBehaviour
         obj = Instantiate(BlockReference, 
             new Vector3(-2,0,0), Quaternion.identity);
         m_Model.SnakeBlocks.Add(obj);
+
+        StartCoroutine(move());
+    }
+
+    Vector3 SnakeTranslate(Vector3 elem, SnakeDirection direction)
+    {
+        switch (direction)
+        {
+            case SnakeDirection.Down:
+                return elem + Vector3.down;
+            case SnakeDirection.Left:
+                return elem + Vector3.left;
+            case SnakeDirection.Right:
+                return elem + Vector3.right;
+            default: 
+                return elem + Vector3.up;
+        }
+    }
+
+    IEnumerator move()
+    {
+        while (true)
+        {
+            // wait for tick
+            yield return new WaitForSeconds(1);
+            // move body
+            for (int i = m_Model.SnakeBlocks.Count - 1;
+                i >= 1; i--)
+                m_Model.SnakeBlocks[i].transform.position = 
+                    m_Model.SnakeBlocks[i - 1].transform.position;
+            // move head
+            m_Model.SnakeBlocks[0].transform.position = 
+                SnakeTranslate(
+                m_Model.SnakeBlocks[0].transform.position,
+                SnakeDirection.Left);
+        }
     }
 }
