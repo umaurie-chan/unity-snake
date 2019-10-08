@@ -102,6 +102,7 @@ public class SnakeControl : MonoBehaviour
                         UnityEngine.Random.Range(-10,10), 
                         UnityEngine.Random.Range(-10,10),
                         0), Quaternion.identity);
+                UpdateTickTime();
             }
             else // move
                 m_Model.SnakeBlocks[0].transform.position = newpos;
@@ -109,6 +110,6 @@ public class SnakeControl : MonoBehaviour
     }
     private void UpdateTickTime()
     {
-        m_TickTime = (m_TickTime -0.1f)*0.9f + 0.1f;
+        m_TickTime = (m_TickTime-0.1f)*0.9f + 0.1f;
     }
 }
